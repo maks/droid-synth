@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/music-synthesizer-for-android.iml" filepath="$PROJECT_DIR$/.idea/music-synthesizer-for-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/music-synthesizer-for-android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/music-synthesizer-for-android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/droidsynth.iml" filepath="$PROJECT_DIR$/.idea/modules/droidsynth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/droidsynth.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/droidsynth.app.iml" />
     </modules>
   </component>
 </project>
