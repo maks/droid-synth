@@ -5,9 +5,9 @@ android {
     buildToolsVersion "28.0.2"
 
     defaultConfig {
-        applicationId "com.levien.synthesizer"
+        applicationId "com.manichord.synthesizer"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }

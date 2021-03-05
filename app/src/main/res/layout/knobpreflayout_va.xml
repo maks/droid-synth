@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.levien.synthesizer.android.widgets.knob.KnobView
+<com.manichord.synthesizer.android.widgets.knob.KnobView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.levien.synthesizer"
+    xmlns:app="http://schemas.android.com/apk/res/com.manichord.synthesizer"
     android:id="@+id/knob"
     app:value="0"
     app:min="0"
