@@ -18,6 +18,7 @@ package com.manichord.synthesizer.android.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,13 +80,10 @@ public class SynthesizerService extends Service {
       androidGlue_.start(params.sampleRate, params.bufferSize);
       InputStream patchIs = getResources().openRawResource(R.raw.rom1a);
       byte[] patchData = new byte[4104];
+
       try {
         patchIs.read(patchData);
-        androidGlue_.sendMidi(patchData);
-        patchNames_ = new ArrayList<String>();
-        for (int i = 0; i < 32; i++) {
-          patchNames_.add(new String(patchData, 124 + 128 * i, 10, "ISO-8859-1"));
-        }
+        loadPatchBank(patchData);
       } catch (IOException e) {
         Log.e(getClass().getName(), "loading patches failed");
       }
@@ -135,6 +133,20 @@ public class SynthesizerService extends Service {
 
   public List<String> getPatchNames() {
     return patchNames_;
+  }
+
+  public void loadPatchBank(byte[] patchData) {
+      androidGlue_.sendMidi(patchData);
+      patchNames_ = new ArrayList<String>();
+      try {
+        for (int i = 0; i < 32; i++) {
+          String patchName = new String(patchData, 124 + 128 * i, 10, "ISO-8859-1");
+          patchNames_.add(patchName);
+          //Log.d("synth", "loaded patch:"+patchName);
+        }
+      } catch (UnsupportedEncodingException e) {
+        Log.e(getClass().getName(), "loading patches failed");
+      }
   }
 
   public boolean connectUsbMidi(UsbDevice device) {
