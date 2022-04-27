@@ -93,8 +93,6 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-
-
     switch (item.getItemId()) {
       case R.id.settings:
         startActivity(new Intent(this, SettingsActivity.class));
@@ -123,7 +121,6 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
     } else {
       // Get the file's content URI from the incoming Intent
       Uri returnUri = returnIntent.getData();
-
         try {
           InputStream patchIs =
                   getContentResolver().openInputStream(returnUri);
@@ -297,6 +294,20 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
           }
         });
       }
+
+      @Override
+      public void onProgramChange(final int channel, final int program) {
+        // Log.d(TAG, "onProgramChange: chan"+channel+" prog:"+program);
+          runOnUiThread(new Runnable() {
+            public void run() {
+              if (program < 32) {
+                presetSpinner_.setSelection(program);
+              } else {
+                Log.i(TAG, "out of range Program change:"+program);
+              }
+            }
+          });
+        }
     });
 
     // Populate patch names (note: we could update an existing list rather than
