@@ -206,6 +206,7 @@ int SynthUnit::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
         buf[4] == 0x20 && buf[5] == 0x00) {
       if (buf_size >= 4104) {
         // TODO: check checksum?
+        //LOGI("SYSEX Loaded patches buffer: %d", buf_size);
         memcpy(patch_data_, buf + 6, 4096);
         ProgramChange(current_patch_);
         return 4104;

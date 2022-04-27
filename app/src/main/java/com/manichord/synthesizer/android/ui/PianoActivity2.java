@@ -16,6 +16,7 @@
 
 package com.manichord.synthesizer.android.ui;
 
+import java.io.InputStream;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -28,8 +29,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -56,6 +59,11 @@ import com.manichord.synthesizer.core.midi.MidiListener;
  * be refactored to make it cleaner.
  */
 public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceChangeListener {
+  private Intent requestFileIntent;
+  private ParcelFileDescriptor inputPFD;
+
+  private static String TAG = PianoActivity2.class.toString();
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     Log.d("synth", "activity onCreate " + getIntent());
@@ -85,22 +93,60 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
+
+
     switch (item.getItemId()) {
       case R.id.settings:
         startActivity(new Intent(this, SettingsActivity.class));
         return true;
-      /*
-      case R.id.compose:
-        startActivity(new Intent(this, ScoreActivity.class));
+      case R.id.load:
+        requestFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        requestFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        requestFileIntent.setType("*/*");
+        requestFile();
         return true;
-        */
       default:
         return super.onOptionsItemSelected(item);
     }
   }
+
+  protected void requestFile() {
+    startActivityForResult(requestFileIntent, 0);
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode,
+                               Intent returnIntent) {
+    // If the selection didn't work
+    if (resultCode != RESULT_OK) {
+      Log.w(TAG, "invalid result code:"+resultCode);
+    } else {
+      // Get the file's content URI from the incoming Intent
+      Uri returnUri = returnIntent.getData();
+
+        try {
+          InputStream patchIs =
+                  getContentResolver().openInputStream(returnUri);
+          byte[] patchData = new byte[4104];
+          patchIs.read(patchData);
+          Log.d(TAG, "syx read from url");
+          if (synthesizerService_ != null) {
+             synthesizerService_.loadPatchBank(patchData);
+            Log.d(TAG, "Loaded Patches");
+            // reload patch names dropdown
+            loadPatchNameListUI();
+          } else {
+            Log.e(TAG, "missing Synth Service, cannot load patch bank");
+          }
+        } catch (Exception e) {
+        Log.e(TAG, "error reading", e);
+      }
+    }
+  }
+
   @Override
   protected void onDestroy() {
-    Log.d("synth", "activity onDestroy");
+    Log.d(TAG, "activity onDestroy");
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
       unregisterReceiver(usbReceiver_);
     }
@@ -137,7 +183,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
 
   @Override
   protected void onNewIntent(Intent intent) {
-    Log.d("synth", "activity onNewIntent " + intent);
+    Log.d(TAG, "activity onNewIntent " + intent);
     connectUsbFromIntent(intent);
   }
 
@@ -180,7 +226,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
           if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
             connectUsbMidi(device);
           } else {
-            Log.d("synth", "permission denied for device " + device);
+            Log.d(TAG, "permission denied for device " + device);
           }
           permissionRequestPending_ = false;
         }
@@ -259,11 +305,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
       // Only set it once, which is a workaround that allows the preset
       // selection to persist for onCreate lifetime. Of course, it should
       // be persisted for real, instead.
-      List<String> patchNames = synthesizerService_.getPatchNames();
-      ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-              PianoActivity2.this, android.R.layout.simple_spinner_item, patchNames);
-      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-      presetSpinner_.setAdapter(adapter);
+      loadPatchNameListUI();
     }
 
     presetSpinner_.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -290,6 +332,14 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
         }
       }
     }
+  }
+
+  private void loadPatchNameListUI() {
+    List<String> patchNames = synthesizerService_.getPatchNames();
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+            PianoActivity2.this, android.R.layout.simple_spinner_item, patchNames);
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    presetSpinner_.setAdapter(adapter);
   }
 
   protected void onSynthDisconnected() {
