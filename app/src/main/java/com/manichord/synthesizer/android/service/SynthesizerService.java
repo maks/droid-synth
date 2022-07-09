@@ -43,6 +43,7 @@ import com.manichord.synthesizer.R;
 import com.manichord.synthesizer.android.AndroidGlue;
 import com.manichord.synthesizer.android.usb.UsbMidiDevice;
 import com.manichord.synthesizer.core.midi.MessageTee;
+import com.manichord.synthesizer.core.midi.MidiChannelFilter;
 import com.manichord.synthesizer.core.midi.MidiListener;
 
 /**
@@ -51,6 +52,17 @@ import com.manichord.synthesizer.core.midi.MidiListener;
  * Activities are bound to it.
  */
 public class SynthesizerService extends Service {
+  int currentChannel_ = 0;
+
+  public void setCurrentChannel(int currentChannel) {
+    currentChannel_ = currentChannel;
+    if (usbMidiDevice_ != null) {
+      usbMidiDevice_.replaceReceiver(new MidiChannelFilter(midiListener_, currentChannel_));
+    } else {
+      Log.e("SynthesizerService", "cannot set current channel no usb midi device");
+    }
+  }
+
   // Class for local client access.
   public class LocalBinder extends Binder {
     public SynthesizerService getService() {
@@ -218,7 +230,7 @@ public class SynthesizerService extends Service {
           usbDevice_ = device;
           usbMidiConnection_ = connection;
           usbMidiInterface_ = intf;
-          usbMidiDevice_ = new UsbMidiDevice(midiListener_, usbMidiConnection_, intf);
+          usbMidiDevice_ = new UsbMidiDevice(new MidiChannelFilter(midiListener_, currentChannel_), usbMidiConnection_, intf);
           usbMidiDevice_.start();
           return true;
         } else {

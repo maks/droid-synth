@@ -105,4 +105,28 @@
   <string name="pref_velSens_summary">Sensitivity of MIDI velocity to pressure</string>
   <string name="pref_velSens_default">0.5</string>
 
+  <string name="pref_midi_channel">Midi Channel</string>
+  <string name="pref_midi_channel_summary">MIDI Channel to listen on</string>
+  <string name="pref_midi_channel_default">0</string>
+  <string-array name="pref_midi_channel_entries">
+    <item>0</item>
+    <item>1</item>
+    <item>2</item>
+    <item>3</item>
+    <item>4</item>
+    <item>5</item>
+    <item>6</item>
+    <item>7</item>
+  </string-array>
+  <string-array name="pref_midi_channel_values">
+    <item>0</item>
+    <item>1</item>
+    <item>2</item>
+    <item>3</item>
+    <item>4</item>
+    <item>5</item>
+    <item>6</item>
+    <item>7</item>
+  </string-array>
+
 </resources>

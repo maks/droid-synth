@@ -18,4 +18,11 @@
 		android:summary="@string/pref_velSens_summary"
 		android:widgetLayout="@layout/knobpreflayout_vs"
 		android:defaultValue="@string/pref_velSens_default" />
+
+	<ListPreference
+		android:key="midi_channel"
+		android:title="@string/pref_midi_channel"
+		android:entries="@array/pref_midi_channel_entries"
+		android:entryValues="@array/pref_midi_channel_values"
+		android:defaultValue="@string/pref_midi_channel_default" />
 </PreferenceScreen>

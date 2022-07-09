@@ -32,7 +32,7 @@ import com.manichord.synthesizer.core.midi.MidiListener;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class UsbMidiDevice {
-  private final MidiListener mReceiver;
+  private MidiListener mReceiver;
   private final UsbDeviceConnection mDeviceConnection;
   private final UsbEndpoint mEndpoint;
 
@@ -67,6 +67,10 @@ public class UsbMidiDevice {
     synchronized (mWaiterThread) {
       mWaiterThread.mStop = true;
     }
+  }
+
+  public void replaceReceiver(MidiListener receiver) {
+    mReceiver = receiver;
   }
 
   // A helper function for clients that might want to query whether a

@@ -59,6 +59,7 @@ import com.manichord.synthesizer.core.midi.MidiListener;
  * be refactored to make it cleaner.
  */
 public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceChangeListener {
+  private int currentChannel = 0;
   private Intent requestFileIntent;
   private ParcelFileDescriptor inputPFD;
 
@@ -157,6 +158,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
     prefs.registerOnSharedPreferenceChangeListener(this);
     onSharedPreferenceChanged(prefs, "keyboard_type");
     onSharedPreferenceChanged(prefs, "vel_sens");
+    onSharedPreferenceChanged(prefs, "midi_channel");
   }
 
   @Override
@@ -175,6 +177,14 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
       float velSens = prefs.getFloat("vel_sens", 0.5f);
       float velAvg = prefs.getFloat("vel_avg", 64);
       keyboard_.setVelocitySensitivity(velSens, velAvg);
+    } else if (key.equals("midi_channel")) {
+      currentChannel = Integer.parseInt(prefs.getString(key, "0"));
+      if (synthesizerService_ != null) {
+        synthesizerService_.setCurrentChannel(currentChannel);
+      } else {
+        Log.d("PianoActivity2", "cannot set current channel no Synth service");
+      }
+      Log.d("PianoActivity2", "set current channel:" + currentChannel);
     }
   }
 
@@ -266,6 +276,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
     // Connect controller changes to knob views
     synthesizerService_.setMidiListener(new MidiAdapter() {
       public void onNoteOn(final int channel, final int note, final int velocity) {
+        Log.d("MAKS","NoteON:"+channel+"-"+note+":"+velocity);
         runOnUiThread(new Runnable() {
           public void run() {
             keyboard_.onNote(note, velocity);
