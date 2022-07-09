@@ -59,7 +59,14 @@ import com.manichord.synthesizer.core.midi.MidiListener;
  * be refactored to make it cleaner.
  */
 public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceChangeListener {
+  private static final int VALUE_ENCODER  = 64;
+  private static final int RESONANCE_DIAL  = 71;
+  private static final int PITCH_DIAL  = 80;
+  private static final int EDIT_DIAL  = 82;
+
   private int currentChannel = 0;
+  private int currentDial;
+
   private Intent requestFileIntent;
   private ParcelFileDescriptor inputPFD;
 
@@ -295,12 +302,31 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
       public void onController(final int channel, final int cc, final int value) {
         runOnUiThread(new Runnable() {
           public void run() {
-            if (cc == 1) {
+            if (cc == PITCH_DIAL) {
               cutoffKnob_.setValue(value * (1.0 / 127));
-            } else if (cc == 2) {
+              synthMidi.onController(0, 1, value);
+            } else if (cc == RESONANCE_DIAL) {
               resonanceKnob_.setValue(value * (1.0 / 127));
-            } else if (cc == 3) {
+              synthMidi.onController(0, 2, value);
+            } else if (cc == EDIT_DIAL) {
               overdriveKnob_.setValue(value * (1.0 / 127));
+              synthMidi.onController(0, 3, value);
+            } else if (cc == 98) {
+              currentDial = value;
+            } else if (cc == 97) {
+              switch (currentDial) {
+                case VALUE_ENCODER:
+                  int currentPos =  presetSpinner_.getSelectedItemPosition();
+                  presetSpinner_.setSelection(currentPos-1);
+                  break;
+              }
+            } else if (cc == 96) {
+              switch (currentDial) {
+                case VALUE_ENCODER:
+                  int currentPos =  presetSpinner_.getSelectedItemPosition();
+                  presetSpinner_.setSelection(currentPos+1);
+                  break;
+              }
             }
           }
         });
