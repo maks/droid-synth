@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.manichord.synthesizer"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/TableLayout01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -14,19 +14,19 @@
         android:gravity="center_horizontal" />
     <TextView
         android:text=""
-        android:id="@+id/emptyLabel"
+        android:id="@+id/emptyLabel1"
         android:gravity="center_horizontal" />
     <TextView
         android:text=""
-        android:id="@+id/emptyLabel"
+        android:id="@+id/emptyLabel2"
         android:gravity="center_horizontal" />
     <TextView
         android:text=""
-        android:id="@+id/emptyLabel"
+        android:id="@+id/emptyLabel3"
         android:gravity="center_horizontal" />
     <TextView
         android:text=""
-        android:id="@+id/emptyLabel"
+        android:id="@+id/emptyLabel4"
         android:gravity="center_horizontal" />
     <TextView
         android:text=""

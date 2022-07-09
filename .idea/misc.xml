@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/amplification.xml" value="0.175" />
+        <entry key="app/src/main/res/layout/karplus_strong.xml" value="0.175" />
+        <entry key="app/src/main/res/layout/piano.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/menu/options_menu.xml" value="0.30833333333333335" />
         <entry key="app/src/main/res/menu/synth_menu.xml" value="0.30833333333333335" />
       </map>

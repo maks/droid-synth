@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 public class MidiFilePlayer extends MidiAdapter {
   /**
    * Creates a new MidiFilePlayer and connects it to a synthesizer.
-   * @param synth - The synthesizer to use for playback.
+   * @param listeners - The synthesizer to use for playback.
    */
   public MidiFilePlayer(List<MidiListener> listeners) {
     logger_ = Logger.getLogger(getClass().getName());
