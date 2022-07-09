@@ -5,6 +5,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 
 import com.manichord.synthesizer.R;
 
@@ -22,7 +23,18 @@ public class SettingsActivity extends PreferenceActivity {
         return true;
       }
     });
+    ListPreference midiChannelPref = (ListPreference)findPreference("midi_channel");
+    updateListSummary(midiChannelPref, midiChannelPref.getValue());
+    Log.d("SettingsActivity", "mid channel:"+midiChannelPref.getValue());
+    midiChannelPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+      public boolean onPreferenceChange(Preference pref, Object newVal) {
+        updateListSummary(pref, newVal.toString());
+        return true;
+      }
+    });
   }
+
+
 
   private void updateListSummary(Preference pref, String newVal) {
     ListPreference lp = (ListPreference)pref;

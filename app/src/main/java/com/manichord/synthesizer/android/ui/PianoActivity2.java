@@ -59,6 +59,14 @@ import com.manichord.synthesizer.core.midi.MidiListener;
  * be refactored to make it cleaner.
  */
 public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceChangeListener {
+  private static final int VALUE_ENCODER  = 64;
+  private static final int RESONANCE_DIAL  = 71;
+  private static final int PITCH_DIAL  = 80;
+  private static final int EDIT_DIAL  = 82;
+
+  private int currentChannel = 0;
+  private int currentDial;
+
   private Intent requestFileIntent;
   private ParcelFileDescriptor inputPFD;
 
@@ -157,6 +165,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
     prefs.registerOnSharedPreferenceChangeListener(this);
     onSharedPreferenceChanged(prefs, "keyboard_type");
     onSharedPreferenceChanged(prefs, "vel_sens");
+    onSharedPreferenceChanged(prefs, "midi_channel");
   }
 
   @Override
@@ -175,6 +184,14 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
       float velSens = prefs.getFloat("vel_sens", 0.5f);
       float velAvg = prefs.getFloat("vel_avg", 64);
       keyboard_.setVelocitySensitivity(velSens, velAvg);
+    } else if (key.equals("midi_channel")) {
+      currentChannel = Integer.parseInt(prefs.getString(key, "0"));
+      if (synthesizerService_ != null) {
+        synthesizerService_.setCurrentChannel(currentChannel);
+      } else {
+        Log.d("PianoActivity2", "cannot set current channel no Synth service");
+      }
+      Log.d("PianoActivity2", "set current channel:" + currentChannel);
     }
   }
 
@@ -266,6 +283,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
     // Connect controller changes to knob views
     synthesizerService_.setMidiListener(new MidiAdapter() {
       public void onNoteOn(final int channel, final int note, final int velocity) {
+        Log.d("MAKS","NoteON:"+channel+"-"+note+":"+velocity);
         runOnUiThread(new Runnable() {
           public void run() {
             keyboard_.onNote(note, velocity);
@@ -284,12 +302,31 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
       public void onController(final int channel, final int cc, final int value) {
         runOnUiThread(new Runnable() {
           public void run() {
-            if (cc == 1) {
+            if (cc == PITCH_DIAL) {
               cutoffKnob_.setValue(value * (1.0 / 127));
-            } else if (cc == 2) {
+              synthMidi.onController(0, 1, value);
+            } else if (cc == RESONANCE_DIAL) {
               resonanceKnob_.setValue(value * (1.0 / 127));
-            } else if (cc == 3) {
+              synthMidi.onController(0, 2, value);
+            } else if (cc == EDIT_DIAL) {
               overdriveKnob_.setValue(value * (1.0 / 127));
+              synthMidi.onController(0, 3, value);
+            } else if (cc == 98) {
+              currentDial = value;
+            } else if (cc == 97) {
+              switch (currentDial) {
+                case VALUE_ENCODER:
+                  int currentPos =  presetSpinner_.getSelectedItemPosition();
+                  presetSpinner_.setSelection(currentPos-1);
+                  break;
+              }
+            } else if (cc == 96) {
+              switch (currentDial) {
+                case VALUE_ENCODER:
+                  int currentPos =  presetSpinner_.getSelectedItemPosition();
+                  presetSpinner_.setSelection(currentPos+1);
+                  break;
+              }
             }
           }
         });
