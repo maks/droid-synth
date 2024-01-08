@@ -32,6 +32,15 @@ public class SettingsActivity extends PreferenceActivity {
         return true;
       }
     });
+    ListPreference touchDragActionPref = (ListPreference)findPreference("touch_drag_action");
+    updateListSummary(touchDragActionPref, touchDragActionPref.getValue());
+    Log.d("SettingsActivity", "touch drag action:"+touchDragActionPref.getValue());
+    touchDragActionPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+      public boolean onPreferenceChange(Preference pref, Object newVal) {
+        updateListSummary(pref, newVal.toString());
+        return true;
+      }
+    });
   }
 
 
