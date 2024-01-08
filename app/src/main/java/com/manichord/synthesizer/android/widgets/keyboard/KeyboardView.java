@@ -281,43 +281,6 @@ public class KeyboardView extends View {
     return false;
   }
 
-  private int notesPressed()
-  {
-    int res = 0;
-    for (int i = 0; i < FINGERS; i++) {
-      if (noteForFinger_[i] != -1)
-        res++;
-    }
-    return res;
-  }
-
-  private boolean handleScrollTouch(int id, float x)
-  {
-    if (touchDragAction_ == TouchDragAction.TDA_ScrollKeyboard)
-    {
-      if (noteForFinger_[id] != -1)
-      {
-        /*
-          The effective scroll offset is the current touch devided by the number of current active touches
-          This correspondes to the following cases:
-          - A single touch: should scroll exactly the same amount as the touch moved, no perceived mismatch between expectations and reality
-          - Multi-touch: either the player moves the fingers more or less synchronously or some of them moves more or less comparing to the others
-            The latter might introduce the sense that the scrolling moves too much or too little because of the mathematics described.
-        */
-        touchTrackingOffset = touchTrackingOffset + (x - touchCurrentX[id]) / notesPressed();
-
-        touchCurrentX[id] = x;
-
-        if (Math.abs(touchTrackingOffset - offset_) >= 1)
-        {
-          setScrollZoom(touchTrackingOffset, zoom_);
-        }
-      }
-      return true;
-    } else
-      return false;
-  }
-
   private boolean onTouchMove(int id, float x, float y, float pressure) {
 
     if (handleScrollTouch(id, x)) {
@@ -355,6 +318,43 @@ public class KeyboardView extends View {
   private static String noteString(int note) {
     int octave = note / 12 - 1;
     return NOTE_NAMES[note % 12] + Integer.toString(octave);
+  }
+
+  private int notesPressed()
+  {
+    int res = 0;
+    for (int i = 0; i < FINGERS; i++) {
+      if (noteForFinger_[i] != -1)
+        res++;
+    }
+    return res;
+  }
+
+  private boolean handleScrollTouch(int id, float x)
+  {
+    if (touchDragAction_ == TouchDragAction.TDA_ScrollKeyboard)
+    {
+      if (noteForFinger_[id] != -1)
+      {
+        /*
+          The effective scroll offset is the current touch devided by the number of current active touches
+          This correspondes to the following cases:
+          - A single touch: should scroll exactly the same amount as the touch moved, no perceived mismatch between expectations and reality
+          - Multi-touch: either the player moves the fingers more or less synchronously or some of them moves more or less comparing to the others
+            The latter might introduce the sense that the scrolling moves too much or too little because of the mathematics described.
+        */
+        touchTrackingOffset = touchTrackingOffset + (x - touchCurrentX[id]) / notesPressed();
+
+        touchCurrentX[id] = x;
+
+        if (Math.abs(touchTrackingOffset - offset_) >= 1)
+        {
+          setScrollZoom(touchTrackingOffset, zoom_);
+        }
+      }
+      return true;
+    } else
+      return false;
   }
 
 
