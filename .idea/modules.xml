@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/droid-synth.iml" filepath="$PROJECT_DIR$/.idea/modules/droid-synth.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/droid-synth.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/droid-synth.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/droid-synth.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/droid-synth.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/droid-synth.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/droid-synth.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/droid-synth.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/droid-synth.app.unitTest.iml" />
     </modules>
   </component>
 </project>
