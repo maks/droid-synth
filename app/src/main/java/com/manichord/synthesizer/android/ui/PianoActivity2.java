@@ -222,10 +222,14 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
   @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
   void setupUsbMidi(Intent intent) {
     permissionIntent_ = PendingIntent.getBroadcast(this, 0, new Intent(
-            ACTION_USB_PERMISSION), 0);
+            ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
     IntentFilter filter = new IntentFilter();
     filter.addAction(ACTION_USB_PERMISSION);
-    registerReceiver(usbReceiver_, filter);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      registerReceiver(usbReceiver_, filter, RECEIVER_EXPORTED);
+    } else {
+      registerReceiver(usbReceiver_, filter);
+    }
     connectUsbFromIntent(intent);
   }
 

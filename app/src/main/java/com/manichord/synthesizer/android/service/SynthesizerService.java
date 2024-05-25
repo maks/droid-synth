@@ -104,7 +104,11 @@ public class SynthesizerService extends Service {
     androidGlue_.setPlayState(true);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
       IntentFilter filter = new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED);
-      registerReceiver(usbReceiver_, filter);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        registerReceiver(usbReceiver_, filter, RECEIVER_EXPORTED);
+      } else {
+        registerReceiver(usbReceiver_, filter);
+      }
       scanUsbMidi();
     }
   }

@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "29.0.2"
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.manichord.synthesizer"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 34
         versionCode 3
         versionName "1.2"
     }
