@@ -166,6 +166,7 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
     onSharedPreferenceChanged(prefs, "keyboard_type");
     onSharedPreferenceChanged(prefs, "vel_sens");
     onSharedPreferenceChanged(prefs, "midi_channel");
+    onSharedPreferenceChanged(prefs, "touch_drag_action");
   }
 
   @Override
@@ -192,6 +193,9 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
         Log.d("PianoActivity2", "cannot set current channel no Synth service");
       }
       Log.d("PianoActivity2", "set current channel:" + currentChannel);
+    } else if (key.equals("touch_drag_action")) {
+      String touchDragAction = prefs.getString(key, "TDA_PlayNotes");
+      keyboard_.setTouchDragAction(KeyboardView.TouchDragAction.toTouchDragAction(touchDragAction));
     }
   }
 

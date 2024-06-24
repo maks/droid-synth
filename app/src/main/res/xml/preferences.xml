@@ -25,4 +25,12 @@
 		android:entries="@array/pref_midi_channel_entries"
 		android:entryValues="@array/pref_midi_channel_values"
 		android:defaultValue="@string/pref_midi_channel_default" />
+
+	<ListPreference
+		android:key="touch_drag_action"
+		android:title="Touch Drag Action"
+		android:entries="@array/pref_touchDragAction_entries"
+		android:entryValues="@array/pref_touchDragAction_values"
+		android:defaultValue="TDA_PlayNotes" />
+
 </PreferenceScreen>

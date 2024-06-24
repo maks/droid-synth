@@ -89,12 +89,23 @@
       <item>2 Row (Piano)</item>
       <item>3 Row</item>
       <item>3 Row Chromatic</item>
-      </string-array>
+  </string-array>
   <string-array name="pref_keyboardType_values">
       <item>2row</item>
       <item>3row</item>
       <item>3chrome</item>
-      </string-array>
+  </string-array>
+
+  <string-array name="pref_touchDragAction_entries">
+    <item>Play notes</item>
+    <item>Scroll keyboard</item>
+  </string-array>
+  <string-array name="pref_touchDragAction_values">
+    <item>TDA_PlayNotes</item>
+    <item>TDA_ScrollKeyboard</item>
+  </string-array>
+
+
   <string name="pref_keyboardType_default">2row</string>
 
   <string name="pref_velAvg">Velocity average value</string>

@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright 2013 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,16 +27,33 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.util.Log;
+import java.lang.Math;
 
 import com.manichord.synthesizer.core.midi.MidiListener;
 
 public class KeyboardView extends View {
+
+  public enum TouchDragAction {
+    TDA_PlayNotes, TDA_ScrollKeyboard;
+
+    public static TouchDragAction toTouchDragAction(String TouchDragActionString) {
+      try {
+        return valueOf(TouchDragActionString);
+      } catch (Exception ex) {
+        return TDA_PlayNotes;
+      }
+    }
+  }
+
   public KeyboardView(Context context, AttributeSet attrs) {
     super(context, attrs);
     nKeys_ = 96;
     firstKey_ = 12;
     noteStatus_ = new byte[128];
     noteForFinger_ = new int[FINGERS];
+    touchCurrentX = new float[FINGERS];
+
     for (int i = 0; i < FINGERS; i++) {
       noteForFinger_[i] = -1;
     }
@@ -53,12 +71,19 @@ public class KeyboardView extends View {
     setKeyboardSpec(KeyboardSpec.make2Row());
     velSens_ = 0.5f;
     velAvg_ = 64;
+
+    touchDragAction_ = TouchDragAction.TDA_PlayNotes;
   }
 
   public void setKeyboardSpec(KeyboardSpec keyboardSpec) {
     keyboardSpec_ = keyboardSpec;
     keyboardScale_ = zoom_ / keyboardSpec_.repeatWidth * keyboardSpec_.keys.length / nKeys_;
     invalidate();
+  }
+
+  public void setTouchDragAction(TouchDragAction action)
+  {
+    touchDragAction_ = action;
   }
 
   public void setMidiListener(MidiListener listener) {
@@ -217,13 +242,24 @@ public class KeyboardView extends View {
 
   private boolean onTouchDown(int id, float x, float y, float pressure) {
     int note = hitTest(x, y);
+
     if (note >= 0 && noteStatus_[note] == 0) {
       int velocity = computeVelocity(pressure);
+
       noteForFinger_[id] = note;
+
       noteStatus_[note] = (byte)velocity;
       if (midiListener_ != null) {
         midiListener_.onNoteOn(0, note, velocity);
       }
+
+      if (touchDragAction_ == TouchDragAction.TDA_ScrollKeyboard)
+      {
+        touchCurrentX[id] = x;
+        if (notesPressed() == 1)
+          touchTrackingOffset = offset_;
+      }
+
       return true;
     }
     return false;
@@ -232,49 +268,97 @@ public class KeyboardView extends View {
   private boolean onTouchUp(int id, float x, float y, float pressure) {
     int note = noteForFinger_[id];
     if (note >= 0) {
+
       int velocity = noteStatus_[note];
       if (midiListener_ != null) {
         midiListener_.onNoteOff(0, note, velocity);
       }
       noteForFinger_[id] = -1;
       noteStatus_[note] = 0;
+
       return true;
     }
     return false;
   }
 
   private boolean onTouchMove(int id, float x, float y, float pressure) {
-    int oldNote = noteForFinger_[id];
-    int newNote = hitTest(x, y);
-    if (newNote != -1 && newNote != oldNote && noteStatus_[newNote] == 0) {
-      // keep consistent velocity; new is likely to be too high
-      if (oldNote >= 0) {
-        int velocity = noteStatus_[oldNote];
-        if (midiListener_ != null) {
-          midiListener_.onNoteOff(0, oldNote, velocity);
-          midiListener_.onNoteOn(0, newNote, velocity);
+
+    if (handleScrollTouch(id, x)) {
+      return false;
+    } else {
+      int oldNote = noteForFinger_[id];
+      int newNote = hitTest(x, y);
+      if (newNote != -1 && newNote != oldNote && noteStatus_[newNote] == 0) {
+        // keep consistent velocity; new is likely to be too high
+        if (oldNote >= 0) {
+          int velocity = noteStatus_[oldNote];
+          if (midiListener_ != null) {
+            midiListener_.onNoteOff(0, oldNote, velocity);
+            midiListener_.onNoteOn(0, newNote, velocity);
+          }
+          noteForFinger_[id] = newNote;
+          noteStatus_[oldNote] = 0;
+          noteStatus_[newNote] = (byte)velocity;
+        } else {
+          // moving onto active note from dead zone
+          int velocity = 64;
+          if (midiListener_ != null) {
+            midiListener_.onNoteOn(0, newNote, velocity);
+          }
+          noteForFinger_[id] = newNote;
+          noteStatus_[newNote] = (byte)velocity;
         }
-        noteForFinger_[id] = newNote;
-        noteStatus_[oldNote] = 0;
-        noteStatus_[newNote] = (byte)velocity;
-      } else {
-        // moving onto active note from dead zone
-        int velocity = 64;
-        if (midiListener_ != null) {
-          midiListener_.onNoteOn(0, newNote, velocity);
-        }
-        noteForFinger_[id] = newNote;
-        noteStatus_[newNote] = (byte)velocity;
+        return true;
       }
-      return true;
+
+      return false;
     }
-  return false;
   }
 
   private static String noteString(int note) {
     int octave = note / 12 - 1;
     return NOTE_NAMES[note % 12] + Integer.toString(octave);
   }
+
+  private int notesPressed()
+  {
+    int res = 0;
+    for (int i = 0; i < FINGERS; i++) {
+      if (noteForFinger_[i] != -1)
+        res++;
+    }
+    return res;
+  }
+
+  private boolean handleScrollTouch(int id, float x)
+  {
+    if (touchDragAction_ == TouchDragAction.TDA_ScrollKeyboard)
+    {
+      if (noteForFinger_[id] != -1)
+      {
+        /*
+          The effective scroll offset is the current touch devided by the number of current active touches
+          This correspondes to the following cases:
+          - A single touch: should scroll exactly the same amount as the touch moved, no perceived mismatch between expectations and reality
+          - Multi-touch: either the player moves the fingers more or less synchronously or some of them moves more or less comparing to the others
+            The latter might introduce the sense that the scrolling moves too much or too little because of the mathematics described.
+        */
+        touchTrackingOffset = touchTrackingOffset + (x - touchCurrentX[id]) / notesPressed();
+
+        touchCurrentX[id] = x;
+
+        if (Math.abs(touchTrackingOffset - offset_) >= 1)
+        {
+          setScrollZoom(touchTrackingOffset, zoom_);
+        }
+      }
+      return true;
+    } else
+      return false;
+  }
+
+
+  private static final String TAG = "KEYBWIDGET";
 
   private float velSens_;
   private float velAvg_;
@@ -286,6 +370,10 @@ public class KeyboardView extends View {
   private float strokeWidth_;
   private float textSize_;
   private float keyboardScale_;
+
+  private float[] touchCurrentX;  // Array containing all current x positions of the note touches
+  private float touchTrackingOffset; // Tracking offset keeps the accurate offset x position and passes it to the scroll when the threashold of 1 is reached
+  private TouchDragAction touchDragAction_;  // The current behavior of the touch-drag action, either the classic way (playing new notes while touch is moving ot scrolling the keyboard)
 
   private float offset_;
   private float zoom_;
