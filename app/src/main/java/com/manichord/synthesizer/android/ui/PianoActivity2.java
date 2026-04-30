@@ -101,18 +101,18 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.settings:
-        startActivity(new Intent(this, SettingsActivity.class));
-        return true;
-      case R.id.load:
-        requestFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        requestFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        requestFileIntent.setType("*/*");
-        requestFile();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
+    int itemId = item.getItemId();
+    if (itemId == R.id.settings) {
+      startActivity(new Intent(this, SettingsActivity.class));
+      return true;
+    } else if (itemId == R.id.load) {
+      requestFileIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+      requestFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+      requestFileIntent.setType("*/*");
+      requestFile();
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
     }
   }
 
