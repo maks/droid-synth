@@ -1,35 +1,50 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.manichord.synthesizer"
-        minSdkVersion 16
-        targetSdkVersion 34
-        versionCode 3
-        versionName "1.2"
+        minSdkVersion 21
+        targetSdkVersion 35
+        versionCode 4
+        versionName "1.3"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        packaging {
+            jniLibs {
+                useLegacyPackaging = false
+            }
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles.add(file('proguard-android.txt'))
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
         }
     }
-    lintOptions {
-        // dont have lint stop release builds for now
-        checkReleaseBuilds false
-    }
-}
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    namespace 'com.manichord.synthesizer'
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
-    api 'com.android.support:appcompat-v7:23.4.0'
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
 }

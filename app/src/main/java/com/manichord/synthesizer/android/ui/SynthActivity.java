@@ -19,7 +19,7 @@ package com.manichord.synthesizer.android.ui;
 import com.manichord.synthesizer.android.service.SynthesizerService;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +31,7 @@ import android.os.IBinder;
  * A base class that handles making a synthesizer connection. All activities should subclass from
  * this if sound should keep going during the activity.
  */
-public class SynthActivity extends Activity {
+public class SynthActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
