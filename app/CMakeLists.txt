@@ -69,3 +69,6 @@ target_link_libraries( # Specifies the target library.
 
                        # Links the log library to the target library.
                        ${openSL-ES} )
+
+# Ensure 16KB page alignment for Android 15
+target_link_options(synth PRIVATE "-Wl,-z,max-page-size=16384")
