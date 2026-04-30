@@ -2,4 +2,5 @@
 <resources>
   <dimen name="knobsize">80dp</dimen>
   <dimen name="scrollstripheight">30dp</dimen>
+  <dimen name="keyboard_height">120dp</dimen>
 </resources>

@@ -6,60 +6,68 @@
     android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <com.manichord.synthesizer.android.widgets.knob.KnobView
-        android:id="@+id/cutoffKnob"
-        app:value="1.0"
-        app:min="0"
-        app:max="1"
-        android:layout_width="@dimen/knobsize"
-        android:layout_height="@dimen/knobsize"
-        android:layout_margin="2dp"
-        android:paddingTop="8dp"
-        app:label="@string/cutoff" />
-    <com.manichord.synthesizer.android.widgets.knob.KnobView
-        android:id="@+id/resonanceKnob"
-        app:value="0.0"
-        app:min="0"
-        app:max="1"
-        android:layout_width="@dimen/knobsize"
-        android:layout_height="@dimen/knobsize"
-        android:paddingTop="8dp"
-        android:layout_margin="2dp" 
-        app:label="@string/resonance"/>
-    <com.manichord.synthesizer.android.widgets.knob.KnobView
-        android:id="@+id/overdriveKnob"
-        app:value="0.0"
-        app:min="0"
-        app:max="1"
-        android:layout_width="@dimen/knobsize"
-        android:layout_height="@dimen/knobsize"
-        android:paddingTop="8dp"
-        android:layout_margin="2dp" 
-        app:label="@string/overdrive"/>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-    <Spinner
-        android:id="@+id/presetSpinner"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:gravity="center_vertical"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <com.manichord.synthesizer.android.widgets.knob.KnobView
+            android:id="@+id/cutoffKnob"
+            app:value="1.0"
+            app:min="0"
+            app:max="1"
+            android:layout_width="@dimen/knobsize"
+            android:layout_height="@dimen/knobsize"
+            android:layout_margin="2dp"
+            app:label="@string/cutoff" />
+
+        <com.manichord.synthesizer.android.widgets.knob.KnobView
+            android:id="@+id/resonanceKnob"
+            app:value="0.0"
+            app:min="0"
+            app:max="1"
+            android:layout_width="@dimen/knobsize"
+            android:layout_height="@dimen/knobsize"
+            android:layout_margin="2dp"
+            app:label="@string/resonance"/>
+
+        <com.manichord.synthesizer.android.widgets.knob.KnobView
+            android:id="@+id/overdriveKnob"
+            app:value="0.0"
+            app:min="0"
+            app:max="1"
+            android:layout_width="@dimen/knobsize"
+            android:layout_height="@dimen/knobsize"
+            android:layout_margin="2dp"
+            app:label="@string/overdrive"/>
+
+        <Spinner
+            android:id="@+id/presetSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            />
     </LinearLayout>
-  </LinearLayout>
-      <com.manichord.synthesizer.android.widgets.keyboard.ScrollStripView
-          android:id="@+id/scrollstrip"
-          android:layout_width="match_parent"
-          android:layout_height="@dimen/scrollstripheight"
-          />
-      <com.manichord.synthesizer.android.widgets.keyboard.KeyboardView
-          android:id="@+id/piano"
-          android:layout_width="match_parent"
-          android:layout_height="0dp"
-          android:layout_weight="1" />
+
+    <com.manichord.synthesizer.android.widgets.keyboard.ScrollStripView
+        android:id="@+id/scrollstrip"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/scrollstripheight"
+        />
+
+    <com.manichord.synthesizer.android.widgets.keyboard.KeyboardView
+        android:id="@+id/piano"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="4dp" />
+
 </LinearLayout>

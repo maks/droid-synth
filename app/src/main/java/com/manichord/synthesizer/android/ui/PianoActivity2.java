@@ -76,8 +76,8 @@ public class PianoActivity2 extends SynthActivity implements OnSharedPreferenceC
   public void onCreate(Bundle savedInstanceState) {
     Log.d("synth", "activity onCreate " + getIntent());
     super.onCreate(savedInstanceState);
-    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     setContentView(R.layout.piano2);
 
     keyboard_ = (KeyboardView)findViewById(R.id.piano);
